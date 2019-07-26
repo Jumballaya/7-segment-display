@@ -1,3 +1,45 @@
+/****
+ * 
+ *  The 7 segment display is divided as such:
+ *      A
+ *   -------
+ * F |     | B
+ *   |  G  |
+ *   -------
+ * E |     | C
+ *   |     |
+ *   -------  0 DP
+ *      D
+ * 
+ *   Finding a display pattern (e.g. the number 2):
+ * 
+ *        A
+ *     -------
+ *           | B
+ *        G  |
+ *     -------
+ *   E |
+ *     |
+ *     -------
+ *        D
+ * 
+ *  1. Follow, in alphabetic order:
+ * 
+ *      a b c d e f g dp
+ *      1 1 0 1 1 0 1 0
+ * 
+ *  2. Then reverse it:
+ * 
+ *      01011011
+ * 
+ *  3. Convert to decimal or hex
+ * 
+ *     DEC: 91
+ *     HEX: 5B
+ * 
+ *  4. Shift out that number
+ */
+
 int numbers[16] = {
     63,  // 0
     6,   // 1
@@ -9,7 +51,7 @@ int numbers[16] = {
     7,   // 7
     127, // 8
     103, // 9
-    123, // a
+    119, // a
     124, // b
     57,  // c
     94,  // d
@@ -18,9 +60,9 @@ int numbers[16] = {
 };
 
 // Pin connected to ST_CP
-int latchPin = 8;
+int latchPin = 12;
 // Pin connected to SH_CP
-int clockPin = 12;
+int clockPin = 8;
 // Pin connected to DS
 int dataPin = 11;
 
@@ -31,21 +73,20 @@ void setup() {
   pinMode(dataPin, OUTPUT);
 }
 
-
-int convert(int i) {
-    if (i < 0 || i > 15) i = i % 16;
-    return numbers[i % 16];
-}
-
 int count = 0;
 void loop() {
-    int data = convert(count++);
-    digitalWrite(latchPin, LOW);
-    // shift out the bits:
-    shiftOut(dataPin, clockPin, MSBFIRST, data);  
+    // 1. Get data to shift out
+    int data = numbers[count++ % 16];
 
-    //take the latch pin high so the LEDs will light up:
+    // 2. Set the latch to LOW
+    digitalWrite(latchPin, LOW);
+
+    // 3. shift out the bits
+    shiftOut(dataPin, clockPin, MSBFIRST, data); 
+
+    // 4. set latch pin HIGH
     digitalWrite(latchPin, HIGH);
-    // pause before next value:
-    delay(500);
+
+    // 5. pause before next value
+    delay(250);
 }
