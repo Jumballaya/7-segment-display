@@ -60,9 +60,9 @@ int numbers[16] = {
 };
 
 // Pin connected to ST_CP
-int latchPin = 12;
+int latchPin = 8;
 // Pin connected to SH_CP
-int clockPin = 8;
+int clockPin = 12;
 // Pin connected to DS
 int dataPin = 11;
 
